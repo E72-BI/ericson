@@ -1,0 +1,1964 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Ericson Tenório - Desenvolvedor de Dashboards Analíticos. Backoffice Analítico que transforma dados em decisões estratégicas.">
+  <title>Ericson Tenório | Dashboards Analíticos - Desenvolvedor de Backoffice</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-primary: #050a12;
+      --bg-secondary: #0a1628;
+      --bg-card: #0d1a2d;
+      --fg-primary: #f0f4f8;
+      --fg-secondary: #94a3b8;
+      --fg-muted: #64748b;
+      --accent: #00d4aa;
+      --accent-hover: #00f5c4;
+      --accent-secondary: #0ea5e9;
+      --border: #1e3a5f;
+      --glow: rgba(0, 212, 170, 0.15);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+    
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg-primary);
+      color: var(--fg-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+    
+    /* Background Pattern */
+    .bg-pattern {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: 
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0, 212, 170, 0.08), transparent),
+        radial-gradient(ellipse 60% 40% at 100% 100%, rgba(14, 165, 233, 0.05), transparent),
+        var(--bg-primary);
+    }
+    
+    .bg-pattern::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(0, 212, 170, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 212, 170, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);
+    }
+    
+    /* Navigation */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 1rem;
+      transition: background 0.3s ease, backdrop-filter 0.3s ease;
+    }
+    
+    .nav.scrolled {
+      background: rgba(5, 10, 18, 0.9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .nav-link {
+      position: relative;
+      color: var(--fg-secondary);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      transition: color 0.2s ease;
+    }
+    
+    .nav-link:hover, .nav-link:focus {
+      color: var(--accent);
+    }
+    
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      transition: width 0.3s ease, left 0.3s ease;
+    }
+    
+    .nav-link:hover::after, .nav-link:focus::after {
+      width: 80%;
+      left: 10%;
+    }
+    
+    /* Mobile Menu */
+    .mobile-menu {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 10, 18, 0.98);
+      backdrop-filter: blur(20px);
+      z-index: 150;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    
+    .mobile-menu.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .mobile-menu a {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.5rem;
+      color: var(--fg-primary);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    
+    .mobile-menu a:hover {
+      color: var(--accent);
+    }
+    
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      z-index: 200;
+      padding: 0.5rem;
+    }
+    
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--fg-primary);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    
+    .hamburger.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+    
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+    
+    .hamburger.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -5px);
+    }
+    
+    @media (max-width: 1024px) {
+      .hamburger {
+        display: flex;
+      }
+      .nav-links-desktop {
+        display: none;
+      }
+    }
+    
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 8rem 1.5rem 4rem;
+      position: relative;
+    }
+    
+    .hero-title {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+    
+    .gradient-text {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    /* Cards */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+      box-shadow: 0 20px 40px -20px rgba(0, 212, 170, 0.2);
+    }
+    
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.875rem 1.75rem;
+      border-radius: 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 0.9375rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: none;
+    }
+    
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg-primary);
+    }
+    
+    .btn-primary:hover, .btn-primary:focus {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px -10px rgba(0, 212, 170, 0.5);
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      color: var(--fg-primary);
+      border: 1px solid var(--border);
+    }
+    
+    .btn-secondary:hover, .btn-secondary:focus {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    
+    /* Section styles */
+    .section {
+      padding: 6rem 1.5rem;
+    }
+    
+    @media (min-width: 768px) {
+      .section {
+        padding: 8rem 2rem;
+      }
+    }
+    
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      margin-bottom: 1rem;
+    }
+    
+    .section-subtitle {
+      font-size: 1.125rem;
+      color: var(--fg-secondary);
+      max-width: 640px;
+    }
+    
+    /* Reveal animations */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+    
+    /* Layer cards */
+    .layer-card {
+      position: relative;
+      background: linear-gradient(180deg, var(--bg-card) 0%, rgba(13, 26, 45, 0.5) 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+    
+    .layer-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .layer-card:hover::before {
+      opacity: 1;
+    }
+    
+    .layer-card:hover {
+      border-color: var(--accent);
+      transform: translateX(8px);
+    }
+    
+    .layer-number {
+      position: absolute;
+      top: 1rem;
+      right: 1.5rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 4rem;
+      font-weight: 700;
+      color: rgba(0, 212, 170, 0.1);
+      line-height: 1;
+    }
+    
+    /* Tool icons */
+    .tool-icon {
+      width: 64px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(0, 212, 170, 0.1) 0%, rgba(14, 165, 233, 0.1) 100%);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .tool-icon:hover {
+      border-color: var(--accent);
+      background: linear-gradient(135deg, rgba(0, 212, 170, 0.2) 0%, rgba(14, 165, 233, 0.2) 100%);
+      transform: scale(1.05);
+    }
+    
+    .tool-icon svg {
+      width: 32px;
+      height: 32px;
+      stroke: var(--accent);
+    }
+    
+    /* Stats */
+    .stat-number {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.5rem, 5vw, 3.5rem);
+      font-weight: 700;
+      color: var(--accent);
+    }
+    
+    /* ICI Slider */
+    .ici-slider {
+      width: 100%;
+      height: 8px;
+      background: var(--bg-secondary);
+      border-radius: 4px;
+      appearance: none;
+      cursor: pointer;
+    }
+    
+    .ici-slider::-webkit-slider-thumb {
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      background: var(--accent);
+      border-radius: 50%;
+      cursor: grab;
+      transition: transform 0.2s ease;
+    }
+    
+    .ici-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+    
+    /* Flow diagram */
+    .flow-node {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .flow-node:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 30px rgba(0, 212, 170, 0.2);
+    }
+    
+    .flow-connector {
+      width: 40px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--border), var(--accent));
+    }
+    
+    /* Tabs */
+    .tab-btn {
+      padding: 0.75rem 1.5rem;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--fg-secondary);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .tab-btn:hover {
+      border-color: var(--accent);
+      color: var(--fg-primary);
+    }
+    
+    .tab-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--bg-primary);
+    }
+    
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Footer */
+    footer {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      padding: 4rem 1.5rem 2rem;
+    }
+    
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: var(--bg-secondary);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent);
+    }
+    
+    /* Focus states */
+    a:focus-visible, button:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    
+    /* Animated background elements */
+    .floating-shape {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      animation: float 20s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      25% { transform: translate(20px, -20px) rotate(5deg); }
+      50% { transform: translate(-10px, 10px) rotate(-5deg); }
+      75% { transform: translate(-20px, -10px) rotate(3deg); }
+    }
+    
+    /* Counter animation */
+    .counter {
+      display: inline-block;
+    }
+    
+    /* Heatmap simulation */
+    .heatmap-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+    
+    .heatmap-cell {
+      aspect-ratio: 1;
+      border-radius: 4px;
+      transition: transform 0.2s ease;
+    }
+    
+    .heatmap-cell:hover {
+      transform: scale(1.2);
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-pattern"></div>
+  
+  <!-- Floating shapes -->
+  <div class="floating-shape" style="width: 400px; height: 400px; background: rgba(0, 212, 170, 0.05); top: 10%; right: -10%;"></div>
+  <div class="floating-shape" style="width: 300px; height: 300px; background: rgba(14, 165, 233, 0.05); bottom: 20%; left: -5%; animation-delay: -5s;"></div>
+  
+  <!-- Navigation -->
+  <nav class="nav" role="navigation" aria-label="Navegação principal">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <a href="#home" class="flex items-center gap-3" aria-label="Ericson Tenório - Análise de Dados & Dashboards">
+        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-[#0a1628] to-[#0d1a2d] border border-[#1e3a5f] flex items-center justify-center">
+          <span class="font-bold text-lg" style="font-family: 'Space Grotesk', sans-serif; color: var(--accent);">ET</span>
+        </div>
+        <span class="hidden sm:block text-sm font-medium" style="color: var(--fg-secondary);">ERICSON TENÓRIO</span>
+      </a>
+      
+      <div class="nav-links-desktop hidden lg:flex items-center gap-1">
+        <a href="#home" class="nav-link">Início</a>
+        <a href="#problema" class="nav-link">Problema</a>
+        <a href="#infraestrutura" class="nav-link">Infraestrutura</a>
+        <a href="#camadas" class="nav-link">Camadas</a>
+        <a href="#bi" class="nav-link">BI</a>
+        <a href="#opex-capex" class="nav-link">OPEX/CAPEX</a>
+        <a href="#ici" class="nav-link">ICI</a>
+      </div>
+      
+      <button class="hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+  
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" role="dialog" aria-label="Menu mobile">
+    <a href="#home">Início</a>
+    <a href="#problema">Problema</a>
+    <a href="#infraestrutura">Infraestrutura</a>
+    <a href="#camadas">Camadas</a>
+    <a href="#bi">BI</a>
+    <a href="#opex-capex">OPEX/CAPEX</a>
+    <a href="#ici">ICI</a>
+  </div>
+  
+  <!-- Hero Section -->
+  <section id="home" class="hero">
+    <div class="max-w-7xl mx-auto w-full">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <div class="reveal">
+            <span class="inline-block px-4 py-1.5 rounded-full text-sm font-medium mb-6" style="background: rgba(0, 212, 170, 0.1); color: var(--accent); border: 1px solid rgba(0, 212, 170, 0.2);">
+              Desenvolvedor de Dashboards Analíticos
+            </span>
+          </div>
+          
+          <h1 class="hero-title reveal reveal-delay-1">
+            Transformar operacao em<br>
+            <span class="gradient-text">leitura executiva</span>
+          </h1>
+          
+          <p class="mt-6 text-lg reveal reveal-delay-2" style="color: var(--fg-secondary);">
+            Sou especialista em <strong>Backoffice Analítico</strong>. Desenvolvo dashboards e soluções de análise que transformam operações complexas em inteligência acionável. Combinando rigor técnico com design intuitivo, crio os instrumentos através dos quais seus dados tomam decisões.
+          </p>
+          
+          <div class="flex flex-wrap gap-4 mt-8 reveal reveal-delay-3">
+            <a href="#infraestrutura" class="btn btn-primary">
+              Conhecer Infraestrutura
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </a>
+            <a href="#ici" class="btn btn-secondary">Ver Simulador</a>
+          </div>
+          
+          <div class="grid grid-cols-3 gap-8 mt-12 pt-8 border-t reveal reveal-delay-4" style="border-color: var(--border);">
+            <div>
+              <div class="stat-number counter" data-target="12">0</div>
+              <div class="text-sm mt-1" style="color: var(--fg-muted);">Dashboards Desenvolvidos</div>
+            </div>
+            <div>
+              <div class="stat-number counter" data-target="50">0</div>
+              <div class="text-sm mt-1" style="color: var(--fg-muted);">KPIs Estruturados</div>
+            </div>
+            <div>
+              <div class="stat-number counter" data-target="8">0</div>
+              <div class="text-sm mt-1" style="color: var(--fg-muted);">Tecnologias Integ.</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="reveal hidden lg:block">
+          <div class="relative">
+            <!-- Animated Dashboard Preview -->
+            <div class="rounded-2xl p-6" style="background: var(--bg-card); border: 1px solid var(--border);">
+              <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                  <div class="w-3 h-3 rounded-full" style="background: var(--accent);"></div>
+                  <span class="text-sm font-medium">Dashboard Executivo</span>
+                </div>
+                <div class="flex gap-2">
+                  <div class="w-2 h-2 rounded-full" style="background: var(--border);"></div>
+                  <div class="w-2 h-2 rounded-full" style="background: var(--border);"></div>
+                  <div class="w-2 h-2 rounded-full" style="background: var(--border);"></div>
+                </div>
+              </div>
+              
+              <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="p-4 rounded-lg" style="background: var(--bg-secondary);">
+                  <div class="text-xs mb-2" style="color: var(--fg-muted);">OPEX Mensal</div>
+                  <div class="text-2xl font-bold" style="font-family: 'Space Grotesk';">R$ 2.4M</div>
+                  <div class="text-xs mt-1" style="color: var(--accent);">-12% vs mês anterior</div>
+                </div>
+                <div class="p-4 rounded-lg" style="background: var(--bg-secondary);">
+                  <div class="text-xs mb-2" style="color: var(--fg-muted);">CAPEX Projetado</div>
+                  <div class="text-2xl font-bold" style="font-family: 'Space Grotesk';">R$ 8.7M</div>
+                  <div class="text-xs mt-1" style="color: var(--accent-secondary);">+5% vs orçamento</div>
+                </div>
+              </div>
+              
+              <!-- Mini chart -->
+              <div class="h-32 flex items-end gap-2" id="heroChart">
+                <!-- Bars will be generated by JS -->
+              </div>
+            </div>
+            
+            <!-- Floating badge -->
+            <div class="absolute -bottom-4 -left-4 px-4 py-3 rounded-xl" style="background: linear-gradient(135deg, var(--accent), var(--accent-secondary)); box-shadow: 0 10px 40px rgba(0, 212, 170, 0.3);">
+              <div class="text-xs font-medium" style="color: var(--bg-primary);">ICI Ativo</div>
+              <div class="text-lg font-bold" style="font-family: 'Space Grotesk'; color: var(--bg-primary);">3 Cenários</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- O Problema -->
+  <section id="problema" class="section" style="background: var(--bg-secondary);">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="section-title reveal">O Desafio</h2>
+        <p class="section-subtitle mx-auto reveal reveal-delay-1">
+          Dados dispersos não geram inteligência. Operações complexas precisam de um backoffice analítico que unifique, processe e comunique.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="card reveal reveal-delay-1">
+          <div class="text-lg font-semibold mb-3" style="color: var(--accent);">Fragmentacao</div>
+          <p style="color: var(--fg-secondary);">
+            Dados espalhados em planilhas, sistemas isolados e relatórios desconectados. Ninguém tem a visão completa.
+          </p>
+        </div>
+
+        <div class="card reveal reveal-delay-2">
+          <div class="text-lg font-semibold mb-3" style="color: var(--accent);">Falta de Inteligencia</div>
+          <p style="color: var(--fg-secondary);">
+            Relatórios descritivos que rastreiam o passado, não instrumentos estratégicos que guiam decisões futuras.
+          </p>
+        </div>
+
+        <div class="card reveal reveal-delay-3">
+          <div class="text-lg font-semibold mb-3" style="color: var(--accent);">Desperdicio de Tempo</div>
+          <p style="color: var(--fg-secondary);">
+            Equipes gastas compilando dados manualmente ao invés de usando insights para resolver problemas reais.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Analise de Dados em Camadas -->
+  <section id="infraestrutura" class="section">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="section-title reveal">Análise Estruturada em Camadas</h2>
+        <p class="section-subtitle mx-auto reveal reveal-delay-1">
+          Metodologia progressiva que constrói dashboards inteligentes, começando com os fundamentos até alcançar insights preditivos estratégicos.
+        </p>
+      </div>
+      
+      <!-- Flow Diagram -->
+      <div class="reveal reveal-delay-2 mb-16">
+        <div class="flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-0">
+          <div class="flow-node">
+            <div class="text-xs mb-1" style="color: var(--fg-muted);">Origem</div>
+            <div class="font-semibold">Dados Brutos</div>
+          </div>
+          <div class="flow-connector hidden lg:block transform rotate-90 lg:rotate-0"></div>
+          <div class="flow-node">
+            <div class="text-xs mb-1" style="color: var(--fg-muted);">Processo</div>
+            <div class="font-semibold">Tratamento</div>
+          </div>
+          <div class="flow-connector hidden lg:block transform rotate-90 lg:rotate-0"></div>
+          <div class="flow-node" style="border-color: var(--accent);">
+            <div class="text-xs mb-1" style="color: var(--accent);">Núcleo</div>
+            <div class="font-semibold gradient-text">Dashboard Analítico</div>
+          </div>
+          <div class="flow-connector hidden lg:block transform rotate-90 lg:rotate-0"></div>
+          <div class="flow-node">
+            <div class="text-xs mb-1" style="color: var(--fg-muted);">Resultado</div>
+            <div class="font-semibold">Decisão Data-Driven</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="card reveal reveal-delay-1">
+          <div class="tool-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+              <line x1="12" y1="22.08" x2="12" y2="12"/>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold mb-2">Consolidação de Dados</h3>
+          <p class="text-sm" style="color: var(--fg-secondary);">
+            Unificar múltiplas fontes em base confiável para análises consistentes.
+          </p>
+        </div>
+        
+        <div class="card reveal reveal-delay-2">
+          <div class="tool-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 6v6l4 2"/>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold mb-2">KPIs Estruturados</h3>
+          <p class="text-sm" style="color: var(--fg-secondary);">
+            Definir métricas claras que alinham visões de negócio e operação.
+          </p>
+        </div>
+        
+        <div class="card reveal reveal-delay-3">
+          <div class="tool-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+              <path d="M2 17l10 5 10-5"/>
+              <path d="M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold mb-2">Dashboards Intuitivos</h3>
+          <p class="text-sm" style="color: var(--fg-secondary);">
+            Visualizações que revelam patterns e facilitam decisões imediatas.
+          </p>
+        </div>
+        
+        <div class="card reveal reveal-delay-4">
+          <div class="tool-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold mb-2">Análise Preditiva</h3>
+          <p class="text-sm" style="color: var(--fg-secondary);">
+            Antecipar tendências e riscos com modelos validados e cenários.
+          </p>
+        </div>
+      </div>
+      
+      <div class="mt-16 p-8 rounded-2xl reveal" style="background: linear-gradient(135deg, rgba(0, 212, 170, 0.05) 0%, rgba(14, 165, 233, 0.05) 100%); border: 1px solid var(--border);">
+        <div class="grid md:grid-cols-2 gap-8 items-center">
+          <div>
+            <h3 class="text-2xl font-semibold mb-4">Os dashboards que construo:</h3>
+            <ul class="space-y-3">
+              <li class="flex items-start gap-3">
+                <svg class="w-5 h-5 mt-0.5 flex-shrink-0" style="color: var(--accent);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <span style="color: var(--fg-secondary);">Mostram padrões escondidos que gestores não conseguem ver em relatórios isolados</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <svg class="w-5 h-5 mt-0.5 flex-shrink-0" style="color: var(--accent);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <span style="color: var(--fg-secondary);">Combinam análise rigorosa com design acessível, tornando dados um instrumento de decisão real</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <svg class="w-5 h-5 mt-0.5 flex-shrink-0" style="color: var(--accent);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <span style="color: var(--fg-secondary);">Conecta escolhas às suas relações de causa e efeito</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <svg class="w-5 h-5 mt-0.5 flex-shrink-0" style="color: var(--accent);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <span style="color: var(--fg-secondary);">Garante decisões robustas mesmo com dados ausentes</span>
+              </li>
+            </ul>
+          </div>
+          <div class="relative">
+            <div class="aspect-square rounded-2xl overflow-hidden" style="background: var(--bg-card); border: 1px solid var(--border);">
+              <div class="p-6 h-full flex flex-col justify-center">
+                <div class="text-center mb-4">
+                  <div class="text-4xl font-bold gradient-text" style="font-family: 'Space Grotesk';">Viés Analítico</div>
+                  <div class="text-sm mt-2" style="color: var(--fg-muted);">do gestor desenvolvido</div>
+                </div>
+                <div class="w-full h-2 rounded-full" style="background: var(--bg-secondary);">
+                  <div class="h-full rounded-full" style="width: 85%; background: linear-gradient(90deg, var(--accent), var(--accent-secondary));"></div>
+                </div>
+                <div class="text-right text-sm mt-2" style="color: var(--accent);">85% de maturidade</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Camadas Analíticas -->
+  <section id="camadas" class="section" style="background: var(--bg-secondary);">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="section-title reveal">Camadas Analíticas</h2>
+        <p class="section-subtitle mx-auto reveal reveal-delay-1">
+          O caminho natural de desenvolvimento da operação em decisão estratégica, em quatro estágios de maturidade.
+        </p>
+      </div>
+      
+      <div class="grid gap-6">
+        <!-- Layer 1 -->
+        <div class="layer-card reveal reveal-delay-1" onclick="toggleLayer(this)">
+          <span class="layer-number">01</span>
+          <div class="relative z-10">
+            <div class="flex items-center gap-4 mb-3">
+              <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: rgba(0, 212, 170, 0.1);">
+                <svg class="w-6 h-6" style="color: var(--accent);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                  <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-xl font-semibold">Dados Confiáveis & Consolidados</h3>
+                <p class="text-sm" style="color: var(--fg-muted);">Fundação analítica</p>
+              </div>
+            </div>
+            <p class="mb-4" style="color: var(--fg-secondary);">
+              Limpeza, validação e consolidação de dados de múltiplas fontes. Base sólida para que todas as análises posteriores sejam confiáveis.
+            </p>
+            <div class="layer-details hidden">
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 pt-4" style="border-top: 1px solid var(--border);">
+                <div class="text-center p-3 rounded-lg" style="background: var(--bg-secondary);">
+                  <div class="text-2xl font-bold" style="color: var(--accent);">99%</div>
+                  <div class="text-xs" style="color: var(--fg-muted);">Qualidade Dados</div>
+                </div>
+                <div class="text-center p-3 rounded-lg" style="background: var(--bg-secondary);">
+                  <div class="text-2xl font-bold" style="color: var(--accent);">12</div>
+                  <div class="text-xs" style="color: var(--fg-muted);">Fontes Integradas</div>
+                </div>
+                <div class="text-center p-3 rounded-lg" style="background: var(--bg-secondary);">
+                  <div class="text-2xl font-bold" style="color: var(--accent);">24/7</div>
+                  <div class="text-xs" style="color: var(--fg-muted);">Atualização</div>
+                </div>
+                <div class="text-center p-3 rounded-lg" style="background: var(--bg-secondary);">
+                  <div class="text-2xl font-bold" style="color: var(--accent);">Zero</div>
+                  <div class="text-xs" style="color: var(--fg-muted);">Inconsistências</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Layer 2 -->
+        <div class="layer-card reveal reveal-delay-2" onclick="toggleLayer(this)">
+          <span class="layer-number">02</span>
+          <div class="relative z-10">
+            <div class="flex items-center gap-4 mb-3">
+              <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: rgba(14, 165, 233, 0.1);">
+                <svg class="w-6 h-6" style="color: var(--accent-secondary);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="3" y1="9" x2="21" y2="9"/>
+                  <line x1="9" y1="21" x2="9" y2="9"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-xl font-semibold">Transformação & Modelagem</h3>
+                <p class="text-sm" style="color: var(--fg-muted);">Estrutura de dados analíticos</p>
+              </div>
+            </div>
+            <p class="mb-4" style="color: var(--fg-secondary);">
+              Modelagem dimensional, transformações de dados e normalização. Estrutura o conhecimento bruto em informação pronta para análise.
+            </p>
+            <div class="layer-details hidden">
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 pt-4" style="border-top: 1px solid var(--border);">
+                <div class="text-center p-3 rounded-lg" style="background: var(--bg-secondary);">
+                  <div class="text-2xl font-bold" style="color: var(--accent-secondary);">8+</div>
+                  <div class="text-xs" style="color: var(--fg-muted);">Modelos Dimensionais</div>
+                </div>
+                <div class="text-center p-3 rounded-lg" style="background: var(--bg-secondary);">
+                  <div class="text-2xl font-bold" style="color: var(--accent-secondary);">50+</div>
+                  <div class="text-xs" style="color: var(--fg-muted);">Transformações ETL</div>
+                </div>
+                <div class="text-center p-3 rounded-lg" style="background: var(--bg-secondary);">
+                  <div class="text-2xl font-bold" style="color: var(--accent-secondary);">15ms</div>
+                  <div class="text-xs" style="color: var(--fg-muted);">Latência Máxima</div>
+                </div>
+                <div class="text-center p-3 rounded-lg" style="background: var(--bg-secondary);">
+                  <div class="text-2xl font-bold" style="color: var(--accent-secondary);">100%</div>
+                  <div class="text-xs" style="color: var(--fg-muted);">Rastreabilidade</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Layer 3 -->
+        <div class="layer-card reveal reveal-delay-3" onclick="toggleLayer(this)">
+          <span class="layer-number">03</span>
+          <div class="relative z-10">
+            <div class="flex items-center gap-4 mb-3">
+              <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: rgba(0, 212, 170, 0.1);">
+                <svg class="w-6 h-6" style="color: var(--accent);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="8" x2="12" y2="12"/>
+                  <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-xl font-semibold">Análise & Insights</h3>
+                <p class="text-sm" style="color: var(--fg-muted);">Descoberta de padrões</p>
+              </div>
+            </div>
+            <p class="mb-4" style="color: var(--fg-secondary);">
+              Identificação de padrões, correlações e anomalias nos dados. Transforma dados estruturados em insights que revelam oportunidades e riscos.
+            </p>
+            <div class="layer-details hidden">
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 pt-4" style="border-top: 1px solid var(--border);">
+                <div class="text-center p-3 rounded-lg" style="background: var(--bg-secondary);">
+                  <div class="text-2xl font-bold" style="color: var(--accent);">200+</div>
+                  <div class="text-xs" style="color: var(--fg-muted);">Métricas Calculadas</div>
+                </div>
+                <div class="text-center p-3 rounded-lg" style="background: var(--bg-secondary);">
+                  <div class="text-2xl font-bold" style="color: var(--accent);">5</div>
+                  <div class="text-xs" style="color: var(--fg-muted);">Anos de Série</div>
+                </div>
+                <div class="text-center p-3 rounded-lg" style="background: var(--bg-secondary);">
+                  <div class="text-2xl font-bold" style="color: var(--accent);">95%</div>
+                  <div class="text-xs" style="color: var(--fg-muted);">Acurácia ML</div>
+                </div>
+                <div class="text-center p-3 rounded-lg" style="background: var(--bg-secondary);">
+                  <div class="text-2xl font-bold" style="color: var(--accent);">+42%</div>
+                  <div class="text-xs" style="color: var(--fg-muted);">Oportunidades</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Layer 4 -->
+        <div class="layer-card reveal reveal-delay-4" onclick="toggleLayer(this)">
+          <span class="layer-number">04</span>
+          <div class="relative z-10">
+            <div class="flex items-center gap-4 mb-3">
+              <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: rgba(14, 165, 233, 0.1);">
+                <svg class="w-6 h-6" style="color: var(--accent-secondary);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                  <polyline points="2 17 12 22 22 17"/>
+                  <polyline points="2 12 12 17 22 12"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-xl font-semibold">Previsão & Cenários</h3>
+                <p class="text-sm" style="color: var(--fg-muted);">Análise preditiva</p>
+              </div>
+            </div>
+            <p class="mb-4" style="color: var(--fg-secondary);">
+              Modelos preditivos e simulação de cenários. Transforma insights em recomendações acionáveis que antecedem tendências do mercado.
+            </p>
+            <div class="layer-details hidden">
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 pt-4" style="border-top: 1px solid var(--border);">
+                <div class="text-center p-3 rounded-lg" style="background: var(--bg-secondary);">
+                  <div class="text-2xl font-bold" style="color: var(--accent-secondary);">12</div>
+                  <div class="text-xs" style="color: var(--fg-muted);">Meses Forecast</div>
+                </div>
+                <div class="text-center p-3 rounded-lg" style="background: var(--bg-secondary);">
+                  <div class="text-2xl font-bold" style="color: var(--accent-secondary);">88%</div>
+                  <div class="text-xs" style="color: var(--fg-muted);">Precisão MAPE</div>
+                </div>
+                <div class="text-center p-3 rounded-lg" style="background: var(--bg-secondary);">
+                  <div class="text-2xl font-bold" style="color: var(--accent-secondary);">50+</div>
+                  <div class="text-xs" style="color: var(--fg-muted);">Cenários Testados</div>
+                </div>
+                <div class="text-center p-3 rounded-lg" style="background: var(--bg-secondary);">
+                  <div class="text-2xl font-bold" style="color: var(--accent-secondary);">Real-time</div>
+                  <div class="text-xs" style="color: var(--fg-muted);">Recomendações</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Ferramentas BI -->
+  <section id="bi" class="section">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="section-title reveal">Ferramentas Analíticas</h2>
+        <p class="section-subtitle mx-auto reveal reveal-delay-1">
+          Integração de BI e análise avançada para traduzir dados em decisões concretas.
+        </p>
+      </div>
+      
+      <!-- Tabs -->
+      <div class="flex flex-wrap justify-center gap-3 mb-12 reveal reveal-delay-2">
+        <button class="tab-btn active" data-tab="bi">BI e Visualização</button>
+        <button class="tab-btn" data-tab="data">Dados e Backend</button>
+        <button class="tab-btn" data-tab="business">Negócios</button>
+        <button class="tab-btn" data-tab="marketing">Marketing</button>
+      </div>
+      
+      <!-- Tab Contents -->
+      <div id="tab-bi" class="tab-content active">
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="card group">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="w-14 h-14 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #F2C811 0%, #E67E22 100%);">
+                <svg class="w-7 h-7" style="color: #000;" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M3 3h18v18H3V3zm16 16V5H5v14h14zm-8-2H9v-4h2v4zm4 0h-2v-6h2v6zm-8 0H5v-2h2v2zm0-4H5v-2h2v2zm8-2h-2V9h2v2zm-4 0H9V9h2v2z"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold">Power BI</h3>
+                <p class="text-sm" style="color: var(--fg-muted);">Microsoft</p>
+              </div>
+            </div>
+            <p class="text-sm" style="color: var(--fg-secondary);">
+              Modelagem relacional, dashboards executivos, análise de performance e alertas de risco em tempo real.
+            </p>
+          </div>
+          
+          <div class="card group">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="w-14 h-14 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #3776AB 0%, #FFD43B 100%);">
+                <svg class="w-7 h-7" style="color: #fff;" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                  <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold">Python + NLP</h3>
+                <p class="text-sm" style="color: var(--fg-muted);">Open Source</p>
+              </div>
+            </div>
+            <p class="text-sm" style="color: var(--fg-secondary);">
+              Processamento de grandes volumes, análise de sentimento, detecção de padrões e insights automatizados.
+            </p>
+          </div>
+          
+          <div class="card group">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="w-14 h-14 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #336791 0%, #699Bc7 100%);">
+                <svg class="w-7 h-7" style="color: #fff;" viewBox="0 0 24 24" fill="currentColor">
+                  <ellipse cx="12" cy="7" rx="8" ry="4"/>
+                  <path d="M4 7v6c0 2.21 3.58 4 8 4s8-1.79 8-4V7"/>
+                  <path d="M4 13v6c0 2.21 3.58 4 8 4s8-1.79 8-4v-6"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold">SQL / PostgreSQL</h3>
+                <p class="text-sm" style="color: var(--fg-muted);">Database</p>
+              </div>
+            </div>
+            <p class="text-sm" style="color: var(--fg-secondary);">
+              Consultas complexas, integração de bases e modelagem de dados relacionais avançada.
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div id="tab-data" class="tab-content">
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="card">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="w-14 h-14 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #0064a5 0%, #00add8 100%);">
+                <svg class="w-7 h-7" style="color: #fff;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 7V4h16v3M9 20h6M12 4v16"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold">ETL Custom</h3>
+                <p class="text-sm" style="color: var(--fg-muted);">Pipelines</p>
+              </div>
+            </div>
+            <p class="text-sm" style="color: var(--fg-secondary);">
+              Extração, transformação e carga de dados automatizados com agendamento inteligente.
+            </p>
+          </div>
+          
+          <div class="card">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="w-14 h-14 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #2496ED 0%, #1D63ED 100%);">
+                <svg class="w-7 h-7" style="color: #fff;" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M13.983 11.078h2.119a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.119a.185.185 0 00-.185.185v1.888c0 .102.083.185.185.185z"/>
+                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0z"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold">Docker</h3>
+                <p class="text-sm" style="color: var(--fg-muted);">Containers</p>
+              </div>
+            </div>
+            <p class="text-sm" style="color: var(--fg-secondary);">
+              Ambientes isolados e reproduzíveis para análises e deployments de ferramentas analíticas.
+            </p>
+          </div>
+          
+          <div class="card">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="w-14 h-14 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);">
+                <svg class="w-7 h-7" style="color: #fff;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="3"/>
+                  <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold">APIs REST</h3>
+                <p class="text-sm" style="color: var(--fg-muted);">Integração</p>
+              </div>
+            </div>
+            <p class="text-sm" style="color: var(--fg-secondary);">
+              Conexão com sistemas externos, automação de coleta de dados e webhooks em tempo real.
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div id="tab-business" class="tab-content">
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="card">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="w-14 h-14 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #0052CC 0%, #2684FF 100%);">
+                <svg class="w-7 h-7" style="color: #fff;" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold">Sienge</h3>
+                <p class="text-sm" style="color: var(--fg-muted);">ERP Construtor</p>
+              </div>
+            </div>
+            <p class="text-sm" style="color: var(--fg-secondary);">
+              Gestão de obras, custos, suprimentos e integração financeira para o setor imobiliário.
+            </p>
+          </div>
+          
+          <div class="card">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="w-14 h-14 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #FF7A59 0%, #FFBC11 100%);">
+                <svg class="w-7 h-7" style="color: #fff;" viewBox="0 0 24 24" fill="currentColor">
+                  <circle cx="12" cy="12" r="10"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold">HubSpot</h3>
+                <p class="text-sm" style="color: var(--fg-muted);">CRM</p>
+              </div>
+            </div>
+            <p class="text-sm" style="color: var(--fg-secondary);">
+              Automação de marketing, gestão de leads e análise de funil de vendas integrada.
+            </p>
+          </div>
+          
+          <div class="card">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="w-14 h-14 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #20375F 0%, #34B3F2 100%);">
+                <svg class="w-7 h-7" style="color: #fff;" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold">Pipedrive</h3>
+                <p class="text-sm" style="color: var(--fg-muted);">Sales CRM</p>
+              </div>
+            </div>
+            <p class="text-sm" style="color: var(--fg-secondary);">
+              Gestão de pipeline, previsão de receita e análise de performance comercial.
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div id="tab-marketing" class="tab-content">
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="card">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="w-14 h-14 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #1A1919 0%, #E6E6E6 100%);">
+                <svg class="w-7 h-7" style="color: #fff;" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold">RD Station</h3>
+                <p class="text-sm" style="color: var(--fg-muted);">Marketing Digital</p>
+              </div>
+            </div>
+            <p class="text-sm" style="color: var(--fg-secondary);">
+              Automação de marketing, nutrição de leads e análise de performance de campanhas.
+            </p>
+          </div>
+          
+          <div class="card">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="w-14 h-14 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #0668E1 0%, #1877F2 100%);">
+                <svg class="w-7 h-7" style="color: #fff;" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold">Meta Ads Manager</h3>
+                <p class="text-sm" style="color: var(--fg-muted);">Ads</p>
+              </div>
+            </div>
+            <p class="text-sm" style="color: var(--fg-secondary);">
+              Gestão de campanhas, otimização de ROI e análise de atribuição multicanal.
+            </p>
+          </div>
+          
+          <div class="card">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="w-14 h-14 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #EA4335 0%, #FBBC04 100%);">
+                <svg class="w-7 h-7" style="color: #fff;" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold">Google Analytics</h3>
+                <p class="text-sm" style="color: var(--fg-muted);">Analytics</p>
+              </div>
+            </div>
+            <p class="text-sm" style="color: var(--fg-secondary);">
+              Análise de comportamento, funis de conversão e insights de audiência.
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="mt-16 p-6 rounded-2xl text-center reveal" style="background: linear-gradient(135deg, rgba(0, 212, 170, 0.1) 0%, rgba(14, 165, 233, 0.1) 100%); border: 1px solid var(--border);">
+        <p class="text-lg" style="color: var(--fg-secondary);">
+          Utilizo IA como suporte analítico, acelerando análises, revisando hipóteses e validando lógicas técnicas.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- OPEX/CAPEX Section -->
+  <section id="opex-capex" class="section">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="section-title reveal">Analise OPEX & CAPEX</h2>
+        <p class="section-subtitle mx-auto reveal reveal-delay-1">
+          Visualizacao clara dos gastos operacionais e investimentos em capital para otimizacao financeira.
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-12 items-start">
+        <!-- OPEX Analysis -->
+        <div class="reveal reveal-delay-2">
+          <div class="rounded-2xl p-6" style="background: var(--bg-card); border: 1px solid var(--border);">
+            <h3 class="text-xl font-semibold mb-6">Desempenho OPEX</h3>
+            
+            <div class="space-y-4">
+              <div class="flex items-center justify-between p-4 rounded-lg" style="background: var(--bg-secondary);">
+                <div>
+                  <div class="text-sm" style="color: var(--fg-muted);">Total Mensal</div>
+                  <div class="text-2xl font-bold" style="font-family: 'Space Grotesk';">R$ 2.4M</div>
+                </div>
+                <div style="color: var(--accent);">-12%</div>
+              </div>
+
+              <div class="flex items-center justify-between p-4 rounded-lg" style="background: var(--bg-secondary);">
+                <div>
+                  <div class="text-sm" style="color: var(--fg-muted);">vs. Oracamento</div>
+                  <div class="text-2xl font-bold" style="font-family: 'Space Grotesk';">+8%</div>
+                </div>
+                <div style="color: var(--accent-secondary);">Tnfase</div>
+              </div>
+
+              <div class="flex items-center justify-between p-4 rounded-lg" style="background: var(--bg-secondary);">
+                <div>
+                  <div class="text-sm" style="color: var(--fg-muted);">Tendencia (YoY)</div>
+                  <div class="text-2xl font-bold" style="font-family: 'Space Grotesk';">-5%</div>
+                </div>
+                <div style="color: var(--accent);">Positivo</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CAPEX Analysis -->
+        <div class="reveal reveal-delay-3">
+          <div class="rounded-2xl p-6" style="background: var(--bg-card); border: 1px solid var(--border);">
+            <h3 class="text-xl font-semibold mb-6">Investimentos CAPEX</h3>
+            
+            <div class="space-y-4">
+              <div class="flex items-center justify-between p-4 rounded-lg" style="background: var(--bg-secondary);">
+                <div>
+                  <div class="text-sm" style="color: var(--fg-muted);">Projecao Anual</div>
+                  <div class="text-2xl font-bold" style="font-family: 'Space Grotesk';">R$ 8.7M</div>
+                </div>
+                <div style="color: var(--accent-secondary);">+5%</div>
+              </div>
+
+              <div class="flex items-center justify-between p-4 rounded-lg" style="background: var(--bg-secondary);">
+                <div>
+                  <div class="text-sm" style="color: var(--fg-muted);">ROI Esperado</div>
+                  <div class="text-2xl font-bold" style="font-family: 'Space Grotesk';">18%</div>
+                </div>
+                <div style="color: var(--accent);">1.8 anos</div>
+              </div>
+
+              <div class="flex items-center justify-between p-4 rounded-lg" style="background: var(--bg-secondary);">
+                <div>
+                  <div class="text-sm" style="color: var(--fg-muted);">Prioridade</div>
+                  <div class="text-2xl font-bold" style="font-family: 'Space Grotesk';">6/10</div>
+                </div>
+                <div style="color: var(--accent-secondary);">Planejado</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- ICI Section -->
+  <section id="ici" class="section" style="background: var(--bg-secondary);">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="section-title reveal">Índice de Cenário Integrado</h2>
+        <p class="section-subtitle mx-auto reveal reveal-delay-1">
+          Ative o viés analítico através de simulações que permitem testar decisões antes de executá-las.
+        </p>
+      </div>
+      
+      <div class="grid lg:grid-cols-2 gap-12 items-start">
+        <!-- Simulator -->
+        <div class="reveal reveal-delay-2">
+          <div class="rounded-2xl p-6" style="background: var(--bg-card); border: 1px solid var(--border);">
+            <h3 class="text-xl font-semibold mb-6">Simulador de Cenários</h3>
+            
+            <div class="space-y-6">
+              <div>
+                <label class="block text-sm mb-2" style="color: var(--fg-secondary);">Variação de Preço</label>
+                <input type="range" class="ici-slider w-full" id="priceSlider" min="-20" max="20" value="0">
+                <div class="flex justify-between text-sm mt-1" style="color: var(--fg-muted);">
+                  <span>-20%</span>
+                  <span id="priceValue" style="color: var(--accent);">0%</span>
+                  <span>+20%</span>
+                </div>
+              </div>
+              
+              <div>
+                <label class="block text-sm mb-2" style="color: var(--fg-secondary);">Ajuste de Equipe</label>
+                <input type="range" class="ici-slider w-full" id="teamSlider" min="-30" max="30" value="0">
+                <div class="flex justify-between text-sm mt-1" style="color: var(--fg-muted);">
+                  <span>-30%</span>
+                  <span id="teamValue" style="color: var(--accent);">0%</span>
+                  <span>+30%</span>
+                </div>
+              </div>
+              
+              <div>
+                <label class="block text-sm mb-2" style="color: var(--fg-secondary);">Investimento em CAPEX</label>
+                <input type="range" class="ici-slider w-full" id="capexSlider" min="0" max="100" value="50">
+                <div class="flex justify-between text-sm mt-1" style="color: var(--fg-muted);">
+                  <span>Conservador</span>
+                  <span id="capexValue" style="color: var(--accent);">50%</span>
+                  <span>Agressivo</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Results -->
+            <div class="grid grid-cols-2 gap-4 mt-8 pt-6" style="border-top: 1px solid var(--border);">
+              <div class="text-center p-4 rounded-xl" style="background: var(--bg-secondary);">
+                <div class="text-xs mb-1" style="color: var(--fg-muted);">Impacto no Fluxo</div>
+                <div class="text-2xl font-bold" id="flowImpact" style="font-family: 'Space Grotesk'; color: var(--accent);">R$ 0</div>
+              </div>
+              <div class="text-center p-4 rounded-xl" style="background: var(--bg-secondary);">
+                <div class="text-xs mb-1" style="color: var(--fg-muted);">Projeção ROI</div>
+                <div class="text-2xl font-bold" id="roiProjection" style="font-family: 'Space Grotesk'; color: var(--accent-secondary);">18%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Heatmap -->
+        <div class="reveal reveal-delay-3">
+          <div class="rounded-2xl p-6" style="background: var(--bg-card); border: 1px solid var(--border);">
+            <h3 class="text-xl font-semibold mb-4">Mapa de Calor - Ordens de Serviço</h3>
+            <p class="text-sm mb-6" style="color: var(--fg-secondary);">
+              Visualização da distribuição de demandas por dia da semana e horário.
+            </p>
+            
+            <div class="heatmap-grid" id="heatmapGrid">
+              <!-- Generated by JS -->
+            </div>
+            
+            <div class="flex items-center justify-center gap-4 mt-4 text-xs" style="color: var(--fg-muted);">
+              <span>Baixo</span>
+              <div class="flex">
+                <div class="w-4 h-4 rounded" style="background: rgba(0, 212, 170, 0.1);"></div>
+                <div class="w-4 h-4 rounded" style="background: rgba(0, 212, 170, 0.3);"></div>
+                <div class="w-4 h-4 rounded" style="background: rgba(0, 212, 170, 0.5);"></div>
+                <div class="w-4 h-4 rounded" style="background: rgba(0, 212, 170, 0.7);"></div>
+                <div class="w-4 h-4 rounded" style="background: rgba(0, 212, 170, 0.9);"></div>
+              </div>
+              <span>Alto</span>
+            </div>
+          </div>
+          
+          <!-- Use cases -->
+          <div class="mt-6 space-y-3">
+            <div class="p-4 rounded-xl" style="background: var(--bg-card); border: 1px solid var(--border);">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: rgba(0, 212, 170, 0.1);">
+                  <svg class="w-4 h-4" style="color: var(--accent);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                  </svg>
+                </div>
+                <p class="text-sm" style="color: var(--fg-secondary);">
+                  <strong style="color: var(--fg-primary);">Simulação Financeira:</strong> Projeção de impacto de mudanças de preço no fluxo de caixa
+                </p>
+              </div>
+            </div>
+            
+            <div class="p-4 rounded-xl" style="background: var(--bg-card); border: 1px solid var(--border);">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: rgba(14, 165, 233, 0.1);">
+                  <svg class="w-4 h-4" style="color: var(--accent-secondary);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 6v6l4 2"/>
+                  </svg>
+                </div>
+                <p class="text-sm" style="color: var(--fg-secondary);">
+                  <strong style="color: var(--fg-primary);">Análise Estrutural:</strong> Redistribuição de equipe para otimizar ordens de serviço
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Results -->
+  <section id="resultados" class="section">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="section-title reveal">Valor Estratégico e Resultados</h2>
+        <p class="section-subtitle mx-auto reveal reveal-delay-1">
+          Transformação de dados em decisão executiva, com impacto mensurável na operação.
+        </p>
+      </div>
+      
+      <!-- Stats Grid -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+        <div class="card text-center reveal reveal-delay-1">
+          <div class="stat-number counter" data-target="45" data-suffix="%">0%</div>
+          <div class="text-sm mt-2" style="color: var(--fg-secondary);">Redução de Falhas Operacionais</div>
+        </div>
+        <div class="card text-center reveal reveal-delay-2">
+          <div class="stat-number counter" data-target="92" data-suffix="%">0%</div>
+          <div class="text-sm mt-2" style="color: var(--fg-secondary);">Previsibilidade CAPEX</div>
+        </div>
+        <div class="card text-center reveal reveal-delay-3">
+          <div class="stat-number counter" data-target="3" data-suffix="x">0x</div>
+          <div class="text-sm mt-2" style="color: var(--fg-secondary);">Velocidade de Decisão</div>
+        </div>
+        <div class="card text-center reveal reveal-delay-4">
+          <div class="stat-number counter" data-target="100" data-suffix="%">0%</div>
+          <div class="text-sm mt-2" style="color: var(--fg-secondary);">Cultura Analítica Ativa</div>
+        </div>
+      </div>
+      
+      <!-- Results List -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="card reveal reveal-delay-1">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style="background: rgba(0, 212, 170, 0.1);">
+              <svg class="w-6 h-6" style="color: var(--accent);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="font-semibold mb-1">Redução de Ordens Corretivas</h3>
+              <p class="text-sm" style="color: var(--fg-secondary);">
+                Menos surpresas operacionais e maior controle sobre manutenções preventivas.
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card reveal reveal-delay-2">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style="background: rgba(14, 165, 233, 0.1);">
+              <svg class="w-6 h-6" style="color: var(--accent-secondary);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="1" x2="12" y2="23"/>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="font-semibold mb-1">Previsibilidade de CAPEX</h3>
+              <p class="text-sm" style="color: var(--fg-secondary);">
+                Investimentos planejados com cenários validados e ROI projetado.
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card reveal reveal-delay-3">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style="background: rgba(0, 212, 170, 0.1);">
+              <svg class="w-6 h-6" style="color: var(--accent);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="font-semibold mb-1">Cultura Analítica na Liderança</h3>
+              <p class="text-sm" style="color: var(--fg-secondary);">
+                Gestores capacitados a tomar decisões baseadas em dados e contexto.
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card reveal reveal-delay-4">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style="background: rgba(14, 165, 233, 0.1);">
+              <svg class="w-6 h-6" style="color: var(--accent-secondary);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <line x1="3" y1="9" x2="21" y2="9"/>
+                <line x1="9" y1="21" x2="9" y2="9"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="font-semibold mb-1">Dashboards Acessíveis</h3>
+              <p class="text-sm" style="color: var(--fg-secondary);">
+                Dados complexos transformados em visualizações claras e acionáveis.
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card reveal reveal-delay-4">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style="background: rgba(0, 212, 170, 0.1);">
+              <svg class="w-6 h-6" style="color: var(--accent);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="font-semibold mb-1">Integração Estratégica</h3>
+              <p class="text-sm" style="color: var(--fg-secondary);">
+                Visão operacional conectada a projeções financeiras e estratégicas.
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card reveal reveal-delay-4">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style="background: rgba(14, 165, 233, 0.1);">
+              <svg class="w-6 h-6" style="color: var(--accent-secondary);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 16v-4"/>
+                <path d="M12 8h.01"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="font-semibold mb-1">Viés Analítico Ativo</h3>
+              <p class="text-sm" style="color: var(--fg-secondary);">
+                Decisões livres de filtros pessoais, fundamentadas em análise e contexto.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Contact CTA -->
+  <section id="contato" class="section" style="background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);">
+    <div class="max-w-4xl mx-auto text-center">
+      <h2 class="section-title reveal">Pronto para seu Backoffice Analítico?</h2>
+      <p class="section-subtitle mx-auto mb-8 reveal reveal-delay-1">
+        Estou disponível para desenvolver dashboards, implementar soluções analíticas e estruturar seu Backoffice Analítico. Transformemos seus dados em decisões.
+      </p>
+      <div class="flex flex-wrap justify-center gap-4 reveal reveal-delay-2">
+        <a href="mailto:ericson.tenorio@outlook.com" class="btn btn-primary">
+          Me Contratar
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+        <a href="#home" class="btn btn-secondary">Voltar ao Topo</a>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Footer -->
+  <footer>
+    <div class="max-w-7xl mx-auto">
+      <div class="grid md:grid-cols-4 gap-8 mb-8">
+        <div>
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-[#0a1628] to-[#0d1a2d] border border-[#1e3a5f] flex items-center justify-center">
+              <span class="font-bold text-lg" style="font-family: 'Space Grotesk', sans-serif; color: var(--accent);">ET</span>
+            </div>
+            <span class="text-sm font-medium" style="color: var(--fg-secondary);">ERICSON TENÓRIO</span>
+          </div>
+          <p class="text-sm" style="color: var(--fg-muted);">
+            Desenvolvedor de Dashboards Analíticos. Backoffice que transforma operação em inteligência.
+          </p>
+        </div>
+        
+        <div>
+          <h4 class="font-semibold mb-4">Navegação</h4>
+          <ul class="space-y-2">
+            <li><a href="#home" class="text-sm transition-colors hover:text-[var(--accent)]" style="color: var(--fg-muted);">Início</a></li>
+            <li><a href="#problema" class="text-sm transition-colors hover:text-[var(--accent)]" style="color: var(--fg-muted);">Problema</a></li>
+            <li><a href="#infraestrutura" class="text-sm transition-colors hover:text-[var(--accent)]" style="color: var(--fg-muted);">Infraestrutura</a></li>
+            <li><a href="#camadas" class="text-sm transition-colors hover:text-[var(--accent)]" style="color: var(--fg-muted);">Camadas</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="font-semibold mb-4">Funcionalidades</h4>
+          <ul class="space-y-2">
+            <li><a href="#bi" class="text-sm transition-colors hover:text-[var(--accent)]" style="color: var(--fg-muted);">BI & Ferramentas</a></li>
+            <li><a href="#opex-capex" class="text-sm transition-colors hover:text-[var(--accent)]" style="color: var(--fg-muted);">OPEX/CAPEX</a></li>
+            <li><a href="#ici" class="text-sm transition-colors hover:text-[var(--accent)]" style="color: var(--fg-muted);">Simulador ICI</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="font-semibold mb-4">Contato</h4>
+          <ul class="space-y-2">
+            <li class="text-sm" style="color: var(--fg-muted);">ericson.tenorio@outlook.com</li>
+            <li class="text-sm" style="color: var(--fg-muted);">Brasil</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="pt-8 text-center text-sm" style="border-top: 1px solid var(--border); color: var(--fg-muted);">
+        <p>© Ericson Tenório - Desenvolvedor de Dashboards Analíticos. Backoffice Analítico 2024-2026.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Initialize variables first
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    
+    // Navigation scroll effect
+    const nav = document.querySelector('.nav');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    });
+    
+    // Mobile menu
+    const hamburger = document.querySelector('.hamburger');
+    const mobileMenu = document.querySelector('.mobile-menu');
+    const mobileLinks = mobileMenu.querySelectorAll('a');
+    
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('active');
+      mobileMenu.classList.toggle('active');
+      hamburger.setAttribute('aria-expanded', hamburger.classList.contains('active'));
+    });
+    
+    mobileLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        mobileMenu.classList.remove('active');
+        hamburger.setAttribute('aria-expanded', 'false');
+      });
+    });
+    
+    // Scroll reveal
+    const revealElements = document.querySelectorAll('.reveal');
+    
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          if (!prefersReducedMotion) {
+            entry.target.classList.add('visible');
+          } else {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'none';
+          }
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    });
+    
+    revealElements.forEach(el => {
+      if (prefersReducedMotion) {
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+      }
+      revealObserver.observe(el);
+    });
+    
+    // Counter animation
+    const counters = document.querySelectorAll('.counter');
+    
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const counter = entry.target;
+          const target = parseInt(counter.dataset.target);
+          const suffix = counter.dataset.suffix || '';
+          
+          if (prefersReducedMotion) {
+            counter.textContent = target + suffix;
+            return;
+          }
+          
+          let current = 0;
+          const increment = target / 50;
+          const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+              counter.textContent = target + suffix;
+              clearInterval(timer);
+            } else {
+              counter.textContent = Math.floor(current) + suffix;
+            }
+          }, 30);
+          
+          counterObserver.unobserve(counter);
+        }
+      });
+    }, { threshold: 0.5 });
+    
+    counters.forEach(counter => counterObserver.observe(counter));
+    
+    // Tabs
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tab = btn.dataset.tab;
+        
+        tabBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        document.querySelectorAll('.tab-content').forEach(content => {
+          content.classList.remove('active');
+        });
+        
+        const targetContent = document.getElementById('tab-' + tab);
+        if (targetContent) {
+          targetContent.classList.add('active');
+        }
+      });
+    });
+    
+    // Layer cards toggle
+    function toggleLayer(card) {
+      const details = card.querySelector('.layer-details');
+      if (details) {
+        details.classList.toggle('hidden');
+      }
+    }
+    
+    // ICI Simulator
+    const priceSlider = document.getElementById('priceSlider');
+    const teamSlider = document.getElementById('teamSlider');
+    const capexSlider = document.getElementById('capexSlider');
+    const priceValue = document.getElementById('priceValue');
+    const teamValue = document.getElementById('teamValue');
+    const capexValue = document.getElementById('capexValue');
+    const flowImpact = document.getElementById('flowImpact');
+    const roiProjection = document.getElementById('roiProjection');
+    
+    function updateSimulation() {
+      const price = parseInt(priceSlider.value);
+      const team = parseInt(teamSlider.value);
+      const capex = parseInt(capexSlider.value);
+      
+      priceValue.textContent = (price >= 0 ? '+' : '') + price + '%';
+      teamValue.textContent = (team >= 0 ? '+' : '') + team + '%';
+      capexValue.textContent = capex + '%';
+      
+      // Simple simulation logic
+      const baseFlow = 2400000;
+      const flowChange = baseFlow * (price / 100) * (1 - team / 200);
+      const newFlow = baseFlow + flowChange;
+      
+      const baseRoi = 18;
+      const roiChange = (capex / 100) * 15 + (price / 100) * 5 - Math.abs(team) / 10;
+      const newRoi = Math.max(5, Math.min(45, baseRoi + roiChange));
+      
+      flowImpact.textContent = 'R$ ' + (newFlow / 1000000).toFixed(1) + 'M';
+      roiProjection.textContent = Math.round(newRoi) + '%';
+    }
+    
+    if (priceSlider && teamSlider && capexSlider) {
+      priceSlider.addEventListener('input', updateSimulation);
+      teamSlider.addEventListener('input', updateSimulation);
+      capexSlider.addEventListener('input', updateSimulation);
+    }
+    
+    // Hero chart
+    const heroChart = document.getElementById('heroChart');
+    if (heroChart) {
+      const chartData = [35, 45, 30, 55, 40, 65, 50, 75, 60, 85, 70, 90];
+      chartData.forEach((value, index) => {
+        const bar = document.createElement('div');
+        bar.style.cssText = `
+          flex: 1;
+          background: linear-gradient(180deg, var(--accent) 0%, rgba(0, 212, 170, 0.3) 100%);
+          border-radius: 4px 4px 0 0;
+          height: ${value}%;
+          transition: height 0.3s ease;
+          cursor: pointer;
+        `;
+        bar.addEventListener('mouseenter', () => {
+          bar.style.background = 'var(--accent)';
+        });
+        bar.addEventListener('mouseleave', () => {
+          bar.style.background = 'linear-gradient(180deg, var(--accent) 0%, rgba(0, 212, 170, 0.3) 100%)';
+        });
+        heroChart.appendChild(bar);
+      });
+    }
+    
+    // Heatmap
+    const heatmapGrid = document.getElementById('heatmapGrid');
+    if (heatmapGrid) {
+      const labels = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+      
+      // Header row
+      const headerCell = document.createElement('div');
+      headerGrid = '';
+      labels.forEach(label => {
+        const cell = document.createElement('div');
+        cell.className = 'text-center text-xs';
+        cell.style.cssText = 'color: var(--fg-muted); padding: 4px;';
+        cell.textContent = label;
+        heatmapGrid.appendChild(cell);
+      });
+      
+      // Data rows (6 time periods)
+      const timeLabels = ['06h', '09h', '12h', '15h', '18h', '21h'];
+      const heatmapData = [
+        [0.1, 0.3, 0.5, 0.4, 0.2, 0.1, 0.05],
+        [0.2, 0.8, 0.9, 0.7, 0.6, 0.4, 0.2],
+        [0.3, 0.7, 0.6, 0.8, 0.7, 0.5, 0.3],
+        [0.2, 0.6, 0.7, 0.5, 0.8, 0.6, 0.2],
+        [0.1, 0.5, 0.4, 0.6, 0.5, 0.7, 0.4],
+        [0.05, 0.2, 0.3, 0.2, 0.3, 0.4, 0.3]
+      ];
+      
+      heatmapData.forEach((row, rowIndex) => {
+        // Time label
+        const timeCell = document.createElement('div');
+        timeCell.className = 'text-xs flex items-center justify-center';
+        timeCell.style.cssText = 'color: var(--fg-muted); padding: 4px;';
+        timeCell.textContent = timeLabels[rowIndex];
+        heatmapGrid.appendChild(timeCell);
+        
+        // Data cells
+        row.forEach((value, colIndex) => {
+          const cell = document.createElement('div');
+          const intensity = Math.max(0.1, Math.min(1, value));
+          cell.className = 'heatmap-cell';
+          cell.style.cssText = `
+            background: rgba(0, 212, 170, ${intensity});
+            cursor: pointer;
+          `;
+          cell.title = `${labels[colIndex]} ${timeLabels[rowIndex]}: ${Math.round(intensity * 100)}% de demanda`;
+          heatmapGrid.appendChild(cell);
+        });
+      });
+    }
+    
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          const offsetTop = target.offsetTop - 80;
+          window.scrollTo({
+            top: offsetTop,
+            behavior: prefersReducedMotion ? 'auto' : 'smooth'
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
