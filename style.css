@@ -29,6 +29,7 @@
 
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
 }
 
 body {
@@ -37,6 +38,7 @@ body {
     background-color: var(--bg-white);
     line-height: 1.6;
     font-size: 16px;
+    overflow-x: hidden;
 }
 
 /* ========================================
@@ -77,6 +79,7 @@ p { margin-bottom: 1rem; color: var(--text-light); }
 
 section {
     padding: 4rem 0;
+    overflow: hidden;
 }
 
 @media (max-width: 768px) {
@@ -363,6 +366,10 @@ section {
 @media (max-width: 768px) {
     .hero {
         padding: 3rem 0;
+    }
+    
+    .hero::before {
+        display: none;
     }
     
     .hero-title {
