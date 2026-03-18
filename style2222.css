@@ -30,8 +30,6 @@
 html {
     scroll-behavior: smooth;
     overflow-x: hidden;
-    width: 100%;
-    max-width: 100vw;
 }
 
 body {
@@ -42,7 +40,6 @@ body {
     font-size: 16px;
     overflow-x: hidden;
     width: 100%;
-    max-width: 100vw;
 }
 
 /* Proteção contra overflow em imagens e mídia */
@@ -1258,40 +1255,4 @@ section {
 
 ::-webkit-scrollbar-thumb:hover {
     background: var(--primary-light);
-}
-
-/* ========================================
-   MOBILE RESPONSIVENESS FIX
-   ======================================== */
-
-@media (max-width: 768px) {
-    html, body {
-        width: 100%;
-        max-width: 100vw;
-        overflow-x: hidden;
-    }
-    
-    .container {
-        padding: 0 0.75rem;
-    }
-    
-    section {
-        padding: 2rem 0;
-    }
-}
-
-@media (max-width: 640px) {
-    html, body {
-        width: 100%;
-        max-width: 100%;
-        overflow-x: hidden;
-    }
-    
-    .container {
-        padding: 0 0.5rem;
-    }
-    
-    section {
-        padding: 1.5rem 0;
-    }
 }
