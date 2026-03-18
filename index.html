@@ -276,6 +276,7 @@
     
     .section {
       padding: 6rem 1.5rem;
+      overflow-x: hidden;
     }
     
     @media (min-width: 768px) {
@@ -562,12 +563,9 @@
 <body>
   <div class="bg-pattern"></div>
   
-  <div class="floating-shape" style="width: 400px; height: 400px; background: rgba(0, 212, 170, 0.05); top: 10%; right: -10%;"></div>
-  <div class="floating-shape" style="width: 300px; height: 300px; background: rgba(14, 165, 233, 0.05); bottom: 20%; left: -5%; animation-delay: -5s;"></div>
-  
   <!-- Navigation -->
   <nav class="nav" role="navigation" aria-label="Navegação principal">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex items-center justify-between">
       <a href="#home" class="flex items-center gap-3" aria-label="Ericson Tenório - Análise de Dados & Dashboards">
         <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-[#0a1628] to-[#0d1a2d] border border-[#1e3a5f] flex items-center justify-center">
           <span class="font-bold text-lg" style="font-family: 'Space Grotesk', sans-serif; color: var(--accent);">ET</span>
@@ -606,7 +604,7 @@
   
   <!-- Hero Section -->
   <section id="home" class="hero">
-    <div class="max-w-7xl mx-auto w-full">
+    <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8">
       <div class="grid lg:grid-cols-2 gap-12 items-center">
         <div>
           <div class="reveal">
@@ -706,7 +704,7 @@
 
   <!-- Situação -->
   <section id="situacao" class="section" style="background: var(--bg-secondary);">
-    <div class="max-w-7xl mx-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16">
         <h2 class="section-title reveal">Quando os dados existem, mas não conversam</h2>
         <p class="section-subtitle mx-auto reveal reveal-delay-1">
@@ -747,7 +745,7 @@
   
   <!-- Infraestrutura Decisória -->
   <section id="infraestrutura" class="section">
-    <div class="max-w-7xl mx-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16">
         <h2 class="section-title reveal">Infraestrutura Decisória</h2>
         <p class="section-subtitle mx-auto reveal reveal-delay-1">
@@ -841,7 +839,7 @@
   
   <!-- Camadas Analíticas -->
   <section id="camadas" class="section" style="background: var(--bg-secondary);">
-    <div class="max-w-7xl mx-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16">
         <h2 class="section-title reveal">Camadas Analíticas</h2>
         <p class="section-subtitle mx-auto reveal reveal-delay-1">
@@ -1088,7 +1086,7 @@
   
   <!-- Ferramentas -->
   <section id="ferramentas" class="section">
-    <div class="max-w-7xl mx-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16">
         <h2 class="section-title reveal">Ferramentas que uso</h2>
         <p class="section-subtitle mx-auto reveal reveal-delay-1">
@@ -1338,7 +1336,7 @@
 
   <!-- Simulador ICI -->
   <section id="simulador" class="section">
-    <div class="max-w-7xl mx-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16">
         <h2 class="section-title reveal">Testar antes de decidir</h2>
         <p class="section-subtitle mx-auto reveal reveal-delay-1">
@@ -1454,7 +1452,7 @@
   
   <!-- Resultados -->
   <section id="resultados" class="section" style="background: var(--bg-secondary);">
-    <div class="max-w-7xl mx-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16">
         <h2 class="section-title reveal">O que começa a acontecer</h2>
         <p class="section-subtitle mx-auto reveal reveal-delay-1">
@@ -1592,7 +1590,7 @@
 
   <!-- OPEX/CAPEX Section -->
   <section id="opex-capex" class="section" style="background: var(--bg-secondary);">
-    <div class="max-w-7xl mx-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16">
         <h2 class="section-title reveal">Onde o dinheiro vai</h2>
         <p class="section-subtitle mx-auto reveal reveal-delay-1">
@@ -1670,7 +1668,7 @@
 
   <!-- Galeria de Dashboards -->
   <section id="galeria" class="section" style="background: var(--bg-secondary);">
-    <div class="max-w-7xl mx-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16">
         <h2 class="section-title reveal">Dashboards em Ação</h2>
         <p class="section-subtitle mx-auto reveal reveal-delay-1">
@@ -1787,7 +1785,7 @@
   
   <!-- Footer -->
   <footer>
-    <div class="max-w-7xl mx-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid md:grid-cols-4 gap-8 mb-8">
         <div>
           <div class="flex items-center gap-3 mb-4">
@@ -1837,6 +1835,32 @@
   </footer>
 
   <script>
+    // Detectar elementos que causam overflow horizontal
+    const checkHorizontalOverflow = () => {
+      const elements = document.querySelectorAll('*');
+      let found = false;
+      
+      elements.forEach(el => {
+        const rect = el.getBoundingClientRect();
+        if (rect.width > window.innerWidth) {
+          console.warn('⚠️ Elemento com overflow horizontal encontrado:', el);
+          console.warn('Classe:', el.className);
+          console.warn('ID:', el.id);
+          console.warn('Width:', rect.width, 'Window Width:', window.innerWidth);
+          found = true;
+        }
+      });
+      
+      if (!found) {
+        console.log('✅ Nenhum elemento com overflow horizontal encontrado');
+      }
+    };
+    
+    // Executar ao carregar
+    window.addEventListener('load', () => {
+      setTimeout(checkHorizontalOverflow, 500);
+    });
+    
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     
     const nav = document.querySelector('.nav');
